@@ -55,11 +55,10 @@ export default function App() {
       console.log("Gemini response:", response.data);
 
       const summaryText =
-  response.data.candidates?.[0]?.content?.parts?.[0]?.text ||
-  "No summary generated";
+        response.data.candidates?.[0]?.content?.parts?.[0]?.text ||
+        "No summary generated";
 
-setSummary(summaryText);
-
+      setSummary(summaryText);
     } catch (err) {
       console.error("Gemini API error:", err.response?.data || err.message);
       setSummary("⚠️ Error generating summary. Please try again.");
@@ -163,14 +162,20 @@ setSummary(summaryText);
           <h2 className="flex items-center gap-2 text-2xl font-bold mb-4 text-green-400">
             <Bot size={22} /> Your AI-generated Summary
           </h2>
-          <div className="bg-gray-900/60 p-4 rounded-xl h-96 overflow-y-auto border border-gray-600 text-sm leading-relaxed">
-            {summary || (
+          {summary ? (
+            <textarea
+              value={summary}
+              onChange={(e) => setSummary(e.target.value)}
+              className="w-full h-96 p-4 rounded-xl bg-gray-900/60 text-white outline-none resize-none border border-gray-600 focus:border-green-500 focus:ring-2 focus:ring-green-500 transition text-sm leading-relaxed"
+            />
+          ) : (
+            <div className="bg-gray-900/60 p-4 rounded-xl h-96 overflow-y-auto border border-gray-600 text-sm leading-relaxed">
               <span className="text-gray-400 text-sm">
                 Upload a meeting transcript and click{" "}
                 <span className="font-semibold text-purple-400">'Generate Summary'</span> to get started.
               </span>
-            )}
-          </div>
+            </div>
+          )}
 
           {summary && (
             <div className="mt-4 flex gap-3">
@@ -185,6 +190,14 @@ setSummary(summaryText);
                 className="flex items-center gap-2 px-4 py-2 bg-gray-700 rounded-lg hover:bg-gray-600 transition text-sm font-medium"
               >
                 <Download size={16} /> Download
+              </button>
+              <button
+                onClick={() =>
+                  (window.location.href = `mailto:?subject=Meeting Summary&body=${encodeURIComponent(summary)}`)
+                }
+                className="flex items-center gap-2 px-4 py-2 bg-gray-700 rounded-lg hover:bg-gray-600 transition text-sm font-medium"
+              >
+                📧 Send as Email
               </button>
             </div>
           )}
